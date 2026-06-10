@@ -157,20 +157,30 @@ public final class MainActivity extends Activity {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
             return true;
         }
-        return checkSelfPermission(videoPermission()) == PackageManager.PERMISSION_GRANTED;
+        return checkSelfPermission(readVideoPermission()) == PackageManager.PERMISSION_GRANTED;
     }
 
     private void requestVideoPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            requestPermissions(new String[]{videoPermission()}, REQUEST_VIDEO_PERMISSION);
+            requestPermissions(startupPermissions(), REQUEST_VIDEO_PERMISSION);
         }
     }
 
-    private String videoPermission() {
+    private String readVideoPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             return Manifest.permission.READ_MEDIA_VIDEO;
         }
         return Manifest.permission.READ_EXTERNAL_STORAGE;
+    }
+
+    private String[] startupPermissions() {
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.P) {
+            return new String[]{
+                    Manifest.permission.READ_EXTERNAL_STORAGE,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+            };
+        }
+        return new String[]{readVideoPermission()};
     }
 
     @Override
